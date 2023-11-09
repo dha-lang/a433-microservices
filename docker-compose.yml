@@ -1,0 +1,33 @@
+#Menentukan versi docker-compose
+version: '3.5'
+
+services:
+  #Service item-app
+  item-app:
+    #Menggunakan image dari Github Packages
+    image: ghcr.io/dha-lang/item-app:v1 
+    #Melakukan port mapping
+    ports:
+      - 80:8080
+    #Berjalan setelah item-db
+    depends_on:
+      - item-db
+    #Restart policy (agar selalu jalan ketika stop/exit)
+    restart: always
+
+  #Service item-app
+  item-db:
+    #Menggunakan image mongo:3
+    image: mongo:3
+    #Memakai volume app-db dan menentukan target
+    volumes:
+      - app-db:/data/db
+    #Melakukan port mapping
+    ports:
+      - 27017:27017
+    #Restart policy (agar selalu jalan ketika stop/exit)
+    restart: always
+
+volumes:
+  #Volume app-db
+  app-db:
