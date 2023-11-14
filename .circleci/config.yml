@@ -1,0 +1,59 @@
+#CircleCI ver
+version: 2.1
+
+#Mendefinisikan jobs
+jobs:
+  #Job 1 = lint-dockerfile
+  lint-dockerfile: 
+    docker: #Menentukan image docker
+      - image: cimg/base:2023.11
+    steps:
+      - checkout #Mengambil code dari Github
+      - setup_remote_docker: #Melakukan setup remote docker
+          version: 20.10.24
+      - run: #Menjalankan command pada line 16 dengan nama pada line 15
+          name: Lint the Dockerfile
+          command: docker pull ghcr.io/hadolint/hadolint < Dockerfile
+  #Job 2 = test-app
+  test-app: 
+    docker:
+      - image: cimg/go:1.20.11
+    steps:
+      - checkout
+      - run: 
+          name: Install dependencies
+          command: go mod download
+      - run: 
+          name: Run unit tests
+          command: go test -v -short --count=1 $(go list ./...)
+  #Job 3 = build-app-karsajobs
+  build-app-karsajobs: 
+    docker:
+      - image: cimg/base:2023.11
+    steps:
+      - checkout 
+      - setup_remote_docker:
+          version: 20.10.24
+      - run: 
+          name: Build the Dockerfile
+          command: docker build -t ghcr.io/${DOCKER_REGS}:latest -f Dockerfile  .
+      - run: 
+          name: Login to Container Registry
+          command: echo $PAT | docker login ghcr.io --username $UNAME_GITHUB --password-stdin
+      - run: 
+          name: Push the Image to Container Registry
+          command: docker push ghcr.io/${DOCKER_REGS}:latest
+
+#Menentukan urutan dan list jobs melalui workflow
+workflows:
+  ci-karsajobs: #Nama workflow
+    jobs: #Menjalankan jobs sesuai urutan
+      - lint-dockerfile
+      - test-app:
+          name: test-app
+          requires: #Menjalankan test-app setelah lint-dockerfile selesai
+            - lint-dockerfile
+      - build-app-karsajobs:
+          name: build-app-karsajobs
+          requires: 
+          - test-app
