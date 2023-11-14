@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment #Menentukan jenis = Deployment
+metadata:
+  name: karsajobs-deployment #Memberi nama deployment
+spec:
+  replicas: 1 #Menentukan jumlah replica
+
+  selector: #Menentukan target deployment untuk setiap label yang ditentukan dibawah
+    matchLabels:
+      app: karsajobs
+      tier: backend
+
+  template: #Menentukan konfigurasi template pod
+    metadata:
+      labels:
+        app: karsajobs
+        tier: backend
+        
+    spec:
+      containers: #Menentukan konfigurasi container karsajobs-backend
+      - name: karsajobs-backend
+        image: ghcr.io/dha-lang/karsajobs:latest
+        ports: #Menentukan port
+          - containerPort: 8080
+        env: #Menambahkan variabel env sesuai kriteria
+          - name: APP_PORT
+            value: "8080"
+          - name: MONGO_HOST
+            value: mongo-service
+          - name: MONGO_USER
+            valueFrom:
+              secretKeyRef:
+                name: mongo-secret
+                key: MONGO_ROOT_USERNAME
+          - name: MONGO_PASS
+            valueFrom:
+              secretKeyRef:
+                name: mongo-secret
+                key: MONGO_ROOT_PASSWORD

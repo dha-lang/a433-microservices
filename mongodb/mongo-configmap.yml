@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap #Menentukan jenis = ConfigMap
+metadata: #Memberikan nama dan label pada configmap
+  name: mongo-config  
+  labels:
+    app: mongodb
+    tier: dbase
+
+data: #Membuat file mongo.conf sesuai kriteria
+  mongo.conf: |
+    storage:
+      dbPath:/data/db

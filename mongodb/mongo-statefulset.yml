@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: StatefulSet #Menentukan jenis = statefulset
+metadata: #Memberikan nama dan label
+  name: mongodb
+  labels:
+    app: karsajobs
+    tier: dbase
+
+spec:
+  selector: #Menentukan target statefulset untuk setiap label yang ditentukan dibawah
+    matchLabels:
+      app: karsajobs
+      tier: dbase
+
+  serviceName: mongodb #Menentukan nama
+
+  replicas: 1 #Menentukan jumlah replica
+
+  template: #Menentukan konfigurasi template
+    metadata:
+      labels:
+        app: karsajobs
+        tier: dbase
+
+    spec:
+      volumes:
+        #Menentukan dan mengaitkan volume dengan properti yang ditentukan (mis. mongo-persvoluclaim dengan pvc mongo-pvc)
+        - name: mongo-persvoluclaim
+          persistentVolumeClaim: 
+            claimName: mongo-pvc
+        - name: mongo-configuration
+          configMap:
+            name: mongo-config
+        - name: mongo-creds
+          secret:
+            secretName: mongo-secret
+
+      containers: #Menentukan config dari containers
+      - image: mongo:latest 
+        name: mongo-db
+
+        #Menentukan variabel env
+        env:
+          - name: MONGO_INITDB_ROOT_USERNAME_FILE
+            value: /etc/mongo-credentials/MONGO_ROOT_USERNAME
+          - name: MONGO_INITDB_ROOT_PASSWORD_FILE
+            value: /etc/mongo-credentials/MONGO_ROOT_PASSWORD
+
+        #Menentukan port
+        ports:
+          - containerPort: 27017
+            name: mongo-defport
+
+        #Mount volume dari volume yang sudah ditentukan diatas
+        volumeMounts:
+          - name: mongo-persvoluclaim
+            mountPath: /data/db
+          - name: mongo-configuration
+            mountPath: /config
+          - name: mongo-creds
+            mountPath: /etc/mongo-credentials

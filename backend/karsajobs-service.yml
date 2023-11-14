@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service #Menentukan jenis = service
+metadata:
+  name: karsajobs-service #Memberi nama untuk service
+
+spec:
+  selector: #Menentukan target service untuk setiap label yang ditentukan dibawah
+    app: karsajobs
+    tier: backend
+
+  type: NodePort #Menentukan tipe servis = nodePort
+
+  ports: #Menentukan port, target port, dan custom nodePort = 32535
+  - port: 8080
+    targetPort: 8080
+    nodePort: 32535

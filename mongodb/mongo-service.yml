@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service #Menentukan jenis = service
+metadata: #Menentukan nama dan label
+  name: mongo-service
+  labels:
+    app: karsajobs
+    tier: dbase
+
+spec:
+  selector: #Menentukan target service untuk setiap label yang ditentukan dibawah
+    app: karsajobs
+    tier: dbase
+  ports: #Menentukan port dan target port untuk mongoDB. (diisi dengan port default mongoDB)
+    - port: 27017
+      targetPort: 27017

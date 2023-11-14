@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment #Menentukan jenis = Deployment
+metadata:
+  name: karsajobs-ui-deployment #Memberi nama deployment
+spec:
+  replicas: 1 #Menentukan jumlah replica
+
+  selector: #Menentukan target deployment untuk setiap label yang ditentukan dibawah
+    matchLabels:
+      app: karsajobs
+      tier: frontend
+
+  template: #Menentukan konfigurasi template pod
+    metadata:
+      labels:
+        app: karsajobs
+        tier: frontend
+
+    spec:
+      containers: #Menentukan konfigurasi container karsajobs-frontend
+      - name: karsajobs-frontend
+        image: ghcr.io/dha-lang/karsajobs-ui:latest
+        ports: #Menentukan port
+          - containerPort: 8000
+        env: #Menambahkan variabel env untuk menghubungkan dengan backend
+          - name: VUE_APP_BACKEND
+            value: http://127.0.0.1:32535
