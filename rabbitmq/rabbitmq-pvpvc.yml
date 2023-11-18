@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: PersistentVolume #Menentukan jenis = persistent volume
+metadata: #Menentukan nama
+  name: rabbitmq-pv
+spec:
+  capacity: #Menentukan kapasitas
+    storage: 1Gi
+  accessModes: #Menentukan mode akses
+    - ReadWriteOnce
+  #Aturan ketika PV dihapus, disini ditetapkan "retain", sehingga data tidak hilang ketika PVC dihapus
+  persistentVolumeReclaimPolicy: Retain
+  hostPath: #Menentukan hostpath
+    path: "/data/rabbitmq-pv"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim #Menentukan jenis = persistent volume claim
+metadata: #Menentukan nama
+  name: rabbitmq-pvc
+spec:
+  accessModes: #Menentukan mode akses
+    - ReadWriteOnce
+  resources:
+    requests: #Menentukan kapasitas yg diminta 
+      storage: 1Gi

@@ -1,0 +1,14 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway #Menentukan jenis = Gateway
+metadata:
+  name: istio-gateway #Memberi nama untuk gateway
+spec:
+  selector: #Menentukan target untuk gateway
+    istio: ingressgateway #Menggunakan default controller milik Istio
+  servers:
+  - port: #Menentukan port, protocol dan host
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service #Menentukan jenis = service
+metadata:
+  name: shipping-svc #Memberi nama untuk service
+
+spec:
+  selector: #Menentukan target service untuk setiap label yang ditentukan dibawah
+    app: shipping
+
+  ports: #Menentukan port, target port, dan protokol
+  - protocol: TCP
+    port: 3001
+    targetPort: 3001

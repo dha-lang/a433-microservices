@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: StatefulSet #Menentukan jenis = stateful set
+metadata: 
+  name: rabbitmq #Memberi nama
+
+spec: #Menentukan target statefulset untuk setiap label yang ditentukan dibawah
+  selector:
+      matchLabels:
+        app: rabbitmq
+
+  serviceName: rabbitmq #Menentukan nama
+
+  replicas: 1 #Menentukan jumlah replica
+  
+  template: #Menentukan konfigurasi template
+    metadata:
+      labels:
+        app: rabbitmq
+
+    spec:
+      volumes:
+      #Menentukan dan mengaitkan volume dengan properti yang ditentukan
+        - name: rabbitmq-persvoluclaim
+          persistentVolumeClaim:
+            claimName: rabbitmq-pvc
+
+      containers: #Menentukan config dari containers
+        - name: rabbitmq
+          image: rabbitmq:3.11-management
+          ports: #Menentukan port
+            - containerPort: 5672
+              name: amqp
+          volumeMounts: #Mount volume dari volume yang sudah ditentukan diatas
+            - name: rabbitmq-persvoluclaim
+              mountPath: /data/rabbitmq

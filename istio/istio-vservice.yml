@@ -1,0 +1,26 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService #Menentukan jenis = virtual service
+metadata:
+  name: istio-vservice #Menentukan nama untuk virtual service
+spec:
+  hosts: #Menentukan host
+  - "*"
+  gateways: #Menentukan gateway
+  - istio-gateway
+  http: #Menentukan pola target untuk url 
+  - match: #Cocok dengan pola dibawah
+    - uri: #URI persis dengan /order
+        exact: /order
+    - uri: #URI persis dengan /shipping
+        exact: /shipping
+    route: #Menentukan rute
+    - destination: #Destinasi host = order-svc dengan port 3000
+        host: order-svc
+        port:
+          number: 3000
+      weight: 100
+    - destination: #Destinasi host = shipping-svc dengan port 3001
+        host: shipping-svc
+        port:
+          number: 3001
+      weight: 100

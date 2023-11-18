@@ -1,0 +1,12 @@
+apiVersion: v1 
+kind: Service #Menentukan jenis = service
+metadata:
+  name: rabbitmq-service #Memberi nama untuk service
+spec:
+  selector: #Menentukan target service untuk setiap label yang ditentukan dibawah
+    app: rabbitmq
+  ports: #Menentukan port dengan memasukkan protokol, nama, port, dan target port
+    - protocol: TCP
+      name: rabbitmq-tcp
+      port: 5672
+      targetPort: 5672
